@@ -18,23 +18,14 @@ namespace JWTManager.Handler
         public const string JWT_SECURITY_KEY = "qwertyuioplkjhgfdsazxcvbnmTralalaTrilili";
         private const int JWT_TOKEN_VALIDATION_MINS = 20;
         private readonly List<UserAccount> _userAccountList;
-        private readonly IConfiguration configuration; 
+        private readonly IConfiguration configuration;
         public JWTTokenHandler(IConfiguration _configuration)
         {
             configuration = _configuration;
-            _userAccountList = new List<UserAccount>
-            {
-                new UserAccount{ Username = "Admin", Password = "Sabeso76", Role = "Administrator" },
-                new UserAccount{ Username = "User1", Password = "Sabeso76", Role = "User" }
-            };
         }
 
         public AuthenticationRespone GenerateToken(AuthenticationRequest _request)
         {
-            if (string.IsNullOrEmpty(_request.Username) && string.IsNullOrWhiteSpace(_request.Password)) return null;
-
-            var _userAccount = _userAccountList.FirstOrDefault(c => c.Username == _request.Username && c.Password == _request.Password);
-            //if (_userAccount == null) return null;
             var _expiredToken = DateTime.Now.AddMinutes(JWT_TOKEN_VALIDATION_MINS);
             //var _key = configuration.GetValue<string>("Jwt:Key");
             //var _tokenKey = Encoding.UTF8.GetBytes(_key);

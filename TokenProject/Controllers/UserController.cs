@@ -1,4 +1,5 @@
 ﻿using DataProvider.DataContext;
+using Domain.Models;
 using JWTManager.Abstract;
 using JWTManager.Handler;
 using JWTManager.Handler.ViewModels;
@@ -7,6 +8,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
 
 namespace TokenProject.Controllers
 {
@@ -32,15 +35,33 @@ namespace TokenProject.Controllers
             {
                 var _password = string.Empty;
                 var _isExist = await _context.UserAccounts.FirstOrDefaultAsync(c => c.Username == _request.Username && c.Password == _request.Password).ConfigureAwait(false);
-                //if (_request.Username == "Admin" && _request.Password == "Admin@12345")
-                if (_isExist != null)
-                {
-                    //_password = _isExist.Password;
-                    _response = _tokenService.GenerateToken(_request);
-                }
+                if (_isExist != null) _response = _tokenService.GenerateToken(_request);
                 else return NotFound();
             }
             return Ok(_response);
         }
+
+        [Authorize, HttpGet]
+        public async Task<ActionResult<List<UserAccount>>> GetUsers() => await _context.UserAccounts.ToListAsync();
+
+        //[AllowAnonymous, HttpPost]
+        //public async Task<ActionResult> Registration([FromBody]AuthenticationRequest _request)
+        //{
+        //    if (_request == null) return NoContent();
+        //    try
+        //    {
+        //        UserAccount _user = new UserAccount();
+        //        _user.Username = _request.Username;
+        //        _user.Password = _request.Password;
+        //        _user.Role = _request.Role;
+        //        await _context.AddAsync(_user);
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (Exception _ex)
+        //    {
+        //        return BadRequest("Error : " + _ex.Message);
+        //    }
+        //    return Ok("SUCCESS");
+        //}
     }
 }

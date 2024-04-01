@@ -44,6 +44,19 @@ namespace TokenProject.Controllers
         [Authorize, HttpGet]
         public async Task<ActionResult<List<UserAccount>>> GetUsers() => await _context.UserAccounts.ToListAsync();
 
+        [AllowAnonymous, HttpPost]
+        public async Task<ActionResult<AuthenticationRequest>> ForgotPassword([FromBody]AuthenticationRequest _request, CancellationToken _cancellationToken)
+        {
+            var _isExist = await _context.UserAccounts.FirstOrDefaultAsync(p => p.Username == _request.Username).ConfigureAwait(false);
+            if (_isExist != null)
+            {
+                _isExist.Password = _request.Password;
+                await _context.SaveChangesAsync();
+            }
+            else return NotFound();
+            return Ok("SUCCESS");
+        }
+
         //[AllowAnonymous, HttpPost]
         //public async Task<ActionResult> Registration([FromBody]AuthenticationRequest _request)
         //{
